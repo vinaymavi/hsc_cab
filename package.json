@@ -1,0 +1,11 @@
+{
+  "name": "cab_req_automation",
+  "version": "0.1.0",
+  "description": "Cab request automation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vinay mavi",
+  "license": "MIT"
+}
