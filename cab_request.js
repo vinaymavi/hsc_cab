@@ -6,16 +6,17 @@
 
 var page = require('webpage').create();
 var HOME_PAGE = "http://ggns2wfs01:81/appedia1/home.php";
+var TAXI_SUCCESS_PAGE = "http://ggns2wfs01:81/taxihelpdesk/user.php?cab_req=success";
 var TAXI_PAGE = "http://ggns2wfs01:81/taxihelpdesk/user.php";
+var LOGIN_PAGE = 'http://ggns2wfs01:81/appedia1/index.php';
 var cookies;
-console.log('The default user agent is ' + page.settings.userAgent);
 page.settings.userAgent = 'SpecialAgent';
 /**
  * Open Login page and register listener for onUrlChanged.
  */
 page.onUrlChanged = function (data) {
     console.log(data);
-    if (data == "http://ggns2wfs01:81/appedia1/home.php") {
+    if (data == HOME_PAGE) {
         console.log("open taxi page.");
         openTaxiPage(TAXI_PAGE);
     }
@@ -27,7 +28,7 @@ page.onConsoleMessage = function (data) {
     console.log("*************************** console msg ***************************");
     console.log(data);
 }
-page.open('http://ggns2wfs01:81/appedia1/index.php', function (status) {
+page.open(LOGIN_PAGE, function (status) {
     console.log(status);
     if (status !== 'success') {
         console.log('Unable to access network');
@@ -39,13 +40,12 @@ page.open('http://ggns2wfs01:81/appedia1/index.php', function (status) {
         }
         page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", function () {
             page.evaluate(function () {
-                $('#nav').val("<emp_id>");
-                $('#pas').val("<password>");
+                $('#nav').val("<EMP_ID>");
+                $('#pas').val("<PASSWORD>");
                 $(".inputbtn").click();
             });
         });
     }
-    //phantom.exit();
 });
 
 /**
@@ -64,9 +64,8 @@ function openTaxiPage(taxiPage) {
      */
     page.onUrlChanged = function (data) {
         console.log(data);
-        if (data == "http://ggns2wfs01:81/appedia1/home.php") {
-            console.log("open taxi page.");
-            openTaxiPage(TAXI_PAGE);
+        if (data == TAXI_SUCCESS_PAGE) {
+            phantom.exit();
         }
     };
     page.onError = function (data) {
@@ -75,12 +74,6 @@ function openTaxiPage(taxiPage) {
     page.onConsoleMessage = function (data) {
         console.log("*************************** console msg ***************************");
         console.log(data);
-    }
-
-
-    for (var i in cookies) {
-        console.log(i);
-        console.log(cookies[i].name + '=' + cookies[i].value);
     }
     phantom.addCookie(cookies);
     page.open(taxiPage, function (status) {
@@ -91,23 +84,15 @@ function openTaxiPage(taxiPage) {
                 console.log("Taxi page loaded successfully.");
                 page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", function () {
                         page.evaluate(function () {
-                            var PRJ_NAME = "HNSJTL01";
+                            var PRJ_NAME = "<PROJECT_NAME>";
                             var SOPT_CAB_8PM = "s";
-                            var DESTINATION = "ggn Malibu town";
+                            var DESTINATION = "<ADDRESS>";
                             var CAB_TYPE = "1";
                             $('#project').val(PRJ_NAME);
                             $('#purpose').val(SOPT_CAB_8PM);
                             $('#address').val(DESTINATION);
                             $('#type_code').val(CAB_TYPE);
                             $('#project').trigger("change");
-                            console.log("Value setting done");
-                            $(".inputbtn3").click(function () {
-                                console.log("click calling");
-                                console.log($('#project').val());
-                                console.log($('#purpose').val());
-                                console.log($('#address').val());
-                                console.log($('#type_code').val());
-                            });
                             $(".inputbtn3").click();
                         });
                     }
